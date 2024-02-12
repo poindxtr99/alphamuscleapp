@@ -1,14 +1,35 @@
+import 'package:alphamuscle/src/models/exercise.dart';
+import 'package:alphamuscle/src/uiwidgets/ui/exercise_tile.dart';
 import 'package:flutter/material.dart';
-import '../../data/dummy_categories.dart';
 
-class ExerciseListView extends StatelessWidget {
-  ExerciseListView({super.key});
+class ExerciseListView extends StatefulWidget {
+  final Function(Exercise) screenAction;
+
+  const ExerciseListView({super.key, required this.screenAction});
+
+  
+
+  @override
+  State<ExerciseListView> createState() => ExerciseListViewState();
+}
+
+class ExerciseListViewState extends State<ExerciseListView> {
 
   final List<List<String>> nestedList = [
     ['Item 1-1', 'Item 1-2', 'Item 1-3'],
     ['Item 2-1', 'Item 2-2', 'Item 2-3', 'Item 2-4'],
     ['Item 3-1', 'Item 3-2'],
   ];
+
+  void viewAction (Exercise exerciseToAdd) {
+    //reactivate the tile
+
+  }
+
+  void tileAction (Exercise exerciseToAdd) {
+    //add to the workout builder view
+    widget.screenAction(exerciseToAdd);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +46,14 @@ class ExerciseListView extends StatelessWidget {
                     child: Text(
                       'Group ${index + 1}',
                       style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                     )),
                 ListView.builder(
                     shrinkWrap: true,
                     itemCount: nestedList[index].length,
                     itemBuilder: (ctx, nestedIndex) {
-                      return ListTile(
-                        title: Text(nestedList[index][nestedIndex]),
+                      return ExerciseTile(
+                        data: nestedList[index][nestedIndex],
                       );
                     })
               ],

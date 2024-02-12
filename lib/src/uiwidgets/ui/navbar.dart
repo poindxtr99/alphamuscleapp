@@ -4,7 +4,9 @@ import '../../screens/workouts_screen.dart';
 import '../../screens/favorites_screen.dart';
 
 class Navbar extends StatefulWidget {
-  const Navbar({super.key});
+  final double appBarHeight;
+
+  const Navbar({super.key, required this.appBarHeight});
   @override
   State<Navbar> createState() {
     return _NavBarState();
@@ -14,10 +16,7 @@ class Navbar extends StatefulWidget {
 class _NavBarState extends State<Navbar> with SingleTickerProviderStateMixin {
   late TabController _tabcontroller;
   bool _isOpen = false;
-  final double _openHeight = 500;
-  final double _openWidth = 500;
-  final double _closedHeight = 500;
-  final double _closedWidth = 500;
+  bool _showTabView = false;
 
   void initState() {
     super.initState();
@@ -37,9 +36,14 @@ class _NavBarState extends State<Navbar> with SingleTickerProviderStateMixin {
             opacity: _isOpen ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 300),
             child: AnimatedContainer(
-                height: _isOpen ? 500 : 50,
-                width: _isOpen ? 500 : 50,
+                height: _isOpen ? (MediaQuery.of(context).size.height - widget.appBarHeight) : 50,
+                width: _isOpen ? (MediaQuery.of(context).size.width) : 50,
                 duration: const Duration(milliseconds: 500),
+                onEnd: () {
+                  setState(() {
+                     _showTabView = _isOpen;
+                  });
+                },
                 child: Stack(
                   children: [
                     Card(
@@ -47,13 +51,16 @@ class _NavBarState extends State<Navbar> with SingleTickerProviderStateMixin {
                         shape: const RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10.0))),
-                        child: TabBarView(
-                            controller: _tabcontroller,
-                            children: [
-                              WorkoutsScreen(),
-                              FavoritesScreen(),
-                              ProfileScreen()
-                            ])),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: _showTabView ? TabBarView(
+                              controller: _tabcontroller,
+                              children: [
+                                WorkoutsScreen(),
+                                FavoritesScreen(),
+                                ProfileScreen()
+                              ]) : const CircularProgressIndicator(),
+                        )),
                     ElevatedButton(
                       onPressed: () => setState(() {
                         _isOpen = false;
@@ -77,6 +84,7 @@ class _NavBarState extends State<Navbar> with SingleTickerProviderStateMixin {
                       setState(() {
                         if (!_isOpen) {
                           _isOpen = true; //open it!
+                          _tabcontroller.animateTo(value);
                         }
                       });
                     },

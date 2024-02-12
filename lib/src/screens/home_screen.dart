@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:alphamuscle/src/app.dart';
 import 'package:flutter/material.dart';
 import 'package:alphamuscle/src/uiwidgets/ui/navbar.dart';
@@ -12,7 +13,7 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          Navbar(),
+          Navbar(appBarHeight: AppBar().preferredSize.height),
         ],
       ),
     );
