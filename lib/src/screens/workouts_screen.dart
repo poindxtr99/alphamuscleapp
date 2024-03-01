@@ -1,24 +1,29 @@
 import 'package:alphamuscle/src/models/exercise_category.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alphamuscle/src/providers/active_workout_provider.dart';
+import 'package:alphamuscle/src/models/workout.dart';
 import '../uiwidgets/ui/exercise_list_view.dart';
 import '../uiwidgets/ui/workout_builder_view.dart';
 import '../models/exercise.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //this is where workouts get built
-class WorkoutsScreen extends StatelessWidget {
+class WorkoutsScreen extends ConsumerWidget {
 
   final GlobalKey<WorkoutBuilderViewState> workoutBuilderViewKey = GlobalKey();
   final GlobalKey<ExerciseListViewState> exerciseListViewKey = GlobalKey();
+  Function? closeCallback; 
+
+  @override
+  WorkoutsScreen({super.key, this.closeCallback});
 
   addToWorkout(Exercise selectedExercise){
     // add the workout to the workout view
-    print('addToWorkout called - workoutBuilderViewKey - ${workoutBuilderViewKey.currentState}');
     workoutBuilderViewKey.currentState?.viewAction(selectedExercise);
   } 
 
   removeFromWorkout(Exercise exerciseToRemove){
-    // update the exercise list
+    // update the exercise list7
     exerciseListViewKey.currentState?.viewAction(exerciseToRemove);
   }
 
@@ -31,9 +36,14 @@ class WorkoutsScreen extends StatelessWidget {
 
   }
 
-  saveWorkout(){
+  saveWorkout(WidgetRef ref){
     // take the workout state and grab send the workout list to the active workout list
-
+    Workout savedWorkout = Workout(name: "Test");
+    savedWorkout.exercises = workoutBuilderViewKey.currentState?.itemList ?? [];
+    print("WorkoutsScreen::saveWorkout - savedWorkout length: ${savedWorkout.exercises.length}");
+    ref.read(activeWorkoutProvider.notifier).setActiveWorkout(savedWorkout);
+    // close the window in navbar
+    closeCallback!();
   }
   
   cancelWorkout(){
@@ -42,7 +52,7 @@ class WorkoutsScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         appBar: AppBar(title: const Text('Workouts Screen')),
         body: Column(children: [
@@ -54,7 +64,10 @@ class WorkoutsScreen extends StatelessWidget {
                   child: Container(
                     height: 50,
                     color: Colors.green,
-                    child: Center(child: ElevatedButton(onPressed: (){ addToWorkout(Exercise(name: 'Test', videoUrl: 'VideoUrl', hasVideoLink: true, difficulty: 'P', category: const ExerciseCategory("Legs", []))); },child: const Icon(Icons.add), ),),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: (){ saveWorkout(ref); },
+                        child: const Icon(Icons.add), ),),
                   ),
                 ),
               Flexible(

@@ -18,11 +18,15 @@ class _NavBarState extends State<Navbar> with SingleTickerProviderStateMixin {
   bool _isOpen = false;
   bool _showTabView = false;
 
+  @override
   void initState() {
     super.initState();
     _tabcontroller = TabController(length: 3, vsync: this);
   }
 
+  void closeWindow() {
+    setState(() { _isOpen = false; });
+  }
   // animate teh card (but which one?!)
 
   @override
@@ -56,7 +60,7 @@ class _NavBarState extends State<Navbar> with SingleTickerProviderStateMixin {
                           child: _showTabView ? TabBarView(
                               controller: _tabcontroller,
                               children: [
-                                WorkoutsScreen(),
+                                WorkoutsScreen(closeCallback: closeWindow,),
                                 FavoritesScreen(),
                                 ProfileScreen()
                               ]) : const CircularProgressIndicator(),

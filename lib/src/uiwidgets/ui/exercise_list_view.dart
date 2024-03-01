@@ -2,12 +2,13 @@ import 'package:alphamuscle/src/models/exercise.dart';
 import 'package:alphamuscle/src/uiwidgets/ui/exercise_tile.dart';
 import 'package:flutter/material.dart';
 
+enum ListState {isOpen, isClosed}
+
 class ExerciseListView extends StatefulWidget {
   final Function(Exercise) screenAction;
-
-  const ExerciseListView({super.key, required this.screenAction});
-
-  
+  ListState listState = ListState.isClosed;
+  final GlobalKey<ExerciseTileState> exerciseListViewKey = GlobalKey();
+  ExerciseListView({super.key, required this.screenAction});
 
   @override
   State<ExerciseListView> createState() => ExerciseListViewState();
@@ -20,15 +21,21 @@ class ExerciseListViewState extends State<ExerciseListView> {
     ['Item 2-1', 'Item 2-2', 'Item 2-3', 'Item 2-4'],
     ['Item 3-1', 'Item 3-2'],
   ];
-
-  void viewAction (Exercise exerciseToAdd) {
+  //should be a map of active renderers
+  Map<String, ExerciseTileState> activeRenderers = {};
+  
+  void viewAction (Exercise exerciseToAddBack) {
     //reactivate the tile
-
+    activeRenderers[exerciseToAddBack.name]?.viewAction();
   }
 
-  void tileAction (Exercise exerciseToAdd) {
+  void tileAction (Exercise exerciseToAdd, ExerciseTileState stateRep) {
     //add to the workout builder view
+    setState(() {
+      widget.listState = widget.listState == ListState.isOpen ? ListState.isClosed : ListState.isOpen;
+    });
     widget.screenAction(exerciseToAdd);
+    activeRenderers[exerciseToAdd.name] = stateRep;
   }
 
   @override
@@ -54,6 +61,7 @@ class ExerciseListViewState extends State<ExerciseListView> {
                     itemBuilder: (ctx, nestedIndex) {
                       return ExerciseTile(
                         data: nestedList[index][nestedIndex],
+                        tileAction: tileAction
                       );
                     })
               ],

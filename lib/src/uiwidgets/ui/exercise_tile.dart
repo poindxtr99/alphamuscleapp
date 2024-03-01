@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:alphamuscle/src/models/exercise_category.dart';
 import '../../models/exercise.dart';
 
-class ExerciseTile extends StatelessWidget {
+enum TileState {isAdded, isAvailable}
+
+class ExerciseTile extends StatefulWidget {
   //final Exercise data;
   final String data;
-  const ExerciseTile({super.key, required this.data});
+  final Function tileAction;
+  
+  
+  ExerciseTile({super.key, required this.data, required this.tileAction});
 
+  @override
+  State<ExerciseTile> createState() => ExerciseTileState();
+
+  
+}
+
+class ExerciseTileState extends State<ExerciseTile> {
+  TileState tileState = TileState.isAvailable;
+  void handleOnPressed(){
+    // This is BAD!!!! don't create a new Exercise everytime
+    widget.tileAction(Exercise(name: widget.data, videoUrl: 'VideoUrl', hasVideoLink: true, difficulty: 'P', category: const ExerciseCategory("Legs", [])), this);
+    setState(() {
+       tileState = TileState.isAdded;
+    });
+  }
+
+  void viewAction(){
+    setState(() {
+      tileState = TileState.isAvailable;
+    });
+  }
   @override
   Widget build(context) {
     return Padding(
@@ -25,8 +52,9 @@ class ExerciseTile extends StatelessWidget {
           children: <Widget>[
             SizedBox(
               width: 30,
+              child: IconButton(onPressed: tileState == TileState.isAvailable ? handleOnPressed : null, icon: const Icon(Icons.add), ),
             ),
-            Expanded(flex: 3, child: Text(data))
+            Expanded(flex: 3, child: Text(widget.data))
           ],
         ),
       ),
