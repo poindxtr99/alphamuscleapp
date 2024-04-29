@@ -1,15 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:alphamuscle/src/util/size_util.dart';
+import 'package:alphamuscle/src/const/color_const.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/workouts_screen.dart';
 import 'screens/favorites_screen.dart';
 
 class App extends StatelessWidget {
+  const App({super.key});
+
+  @override
   Widget build(context) {
+    SizeUtil.size = MediaQuery.of(context).size;
     return MaterialApp(
       title: 'Alpha Muscle',
+      theme: ThemeData(
+        scaffoldBackgroundColor: offWhite,
+        appBarTheme: const AppBarTheme(backgroundColor: offWhite),
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.w600,
+            color: gray,
+          ),
+          headlineMedium: TextStyle(
+            fontSize: 20,
+            color: gray,
+          ),
+          headlineSmall: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: gray,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 15,
+            color: gray,
+          ),
+          bodySmall: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w200,
+            fontStyle: FontStyle.italic,
+            color: gray,
+          ),
+        ),
+      ),
       onGenerateRoute: routes,
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }
@@ -21,7 +58,7 @@ Route routes(RouteSettings settings) {
     });
   } else if (settings.name == '/profile') {
     return MaterialPageRoute(builder: (context) {
-      return ProfileScreen();
+      return const ProfileScreen();
     });
   } else if (settings.name == '/favorites') {
     return MaterialPageRoute(builder: (context) {
@@ -29,7 +66,7 @@ Route routes(RouteSettings settings) {
     });
   } else {
     return MaterialPageRoute(builder: (context) {
-      return HomeScreen();
+      return const HomeScreen();
     });
   }
 }

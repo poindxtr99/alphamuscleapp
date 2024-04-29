@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 
 enum Categories { legs, arms, back, shoulders, core }
 

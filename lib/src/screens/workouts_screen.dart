@@ -1,8 +1,8 @@
-import 'package:alphamuscle/src/models/exercise_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphamuscle/src/providers/active_workout_provider.dart';
 import 'package:alphamuscle/src/models/workout.dart';
+import 'package:alphamuscle/src/const/color_const.dart';
 import '../uiwidgets/ui/exercise_list_view.dart';
 import '../uiwidgets/ui/workout_builder_view.dart';
 import '../models/exercise.dart';
@@ -10,6 +10,7 @@ import '../models/exercise.dart';
 //this is where workouts get built
 class WorkoutsScreen extends ConsumerWidget {
 
+  // GlobalKey provides reference to the state for the workout builder and exercise list view
   final GlobalKey<WorkoutBuilderViewState> workoutBuilderViewKey = GlobalKey();
   final GlobalKey<ExerciseListViewState> exerciseListViewKey = GlobalKey();
   Function? closeCallback; 
@@ -37,55 +38,64 @@ class WorkoutsScreen extends ConsumerWidget {
   }
 
   saveWorkout(WidgetRef ref){
-    // take the workout state and grab send the workout list to the active workout list
+    // take the workout state and send the workout to the active workout list
     Workout savedWorkout = Workout(name: "Test");
     savedWorkout.exercises = workoutBuilderViewKey.currentState?.itemList ?? [];
-    print("WorkoutsScreen::saveWorkout - savedWorkout length: ${savedWorkout.exercises.length}");
     ref.read(activeWorkoutProvider.notifier).setActiveWorkout(savedWorkout);
     // close the window in navbar
     closeCallback!();
   }
   
   cancelWorkout(){
-    // close out the screen and disc
+    // close out the screen and discard the current workout
 
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Workouts Screen')),
+        appBar: AppBar(
+          backgroundColor: offWhite,
+          title: const Text('Workouts Screen')),
         body: Column(children: [
           WorkoutBuilderView(key: workoutBuilderViewKey, screenAction: removeFromWorkout),
-          Container(
-            child: Row(children: [
+          Row(children: [
               Flexible(
                 fit: FlexFit.loose,
                   child: Container(
                     height: 50,
-                    color: Colors.green,
-                    child: Center(
-                      child: ElevatedButton(
-                        onPressed: (){ saveWorkout(ref); },
-                        child: const Icon(Icons.add), ),),
                   ),
                 ),
+              // Save button
               Flexible(
                 fit: FlexFit.loose,
-                child: Container(
+                child: SizedBox(
                   height: 50,
-                  color: Colors.yellow,
+                  child: Center(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(side: BorderSide.none),
+                        backgroundColor: gray,
+                        minimumSize: const Size.fromRadius(20.0)
+                      ),
+                      onPressed: (){ saveWorkout(ref); },
+                      child: const Icon(Icons.add_outlined, color: orange,), ),),
                 ),
               ),
+              // Random button
               Flexible(
                 fit: FlexFit.loose,
-                child: Container(
+                child: SizedBox(
                   height: 50,
-                  color: Colors.orange,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed: (){}, 
+                      icon: const Icon(Icons.shuffle_outlined, color: gray,), 
+                      label: const Text("Random", style: TextStyle(fontSize:15, color: gray),)),),
                 ),
               ),
             ]),
-          ),
           ExerciseListView(key: exerciseListViewKey, screenAction: addToWorkout)
         ]));
   }

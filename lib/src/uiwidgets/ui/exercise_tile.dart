@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:alphamuscle/src/const/color_const.dart';
 import 'package:alphamuscle/src/models/exercise_category.dart';
 import '../../models/exercise.dart';
 
@@ -10,7 +11,7 @@ class ExerciseTile extends StatefulWidget {
   final Function tileAction;
   
   
-  ExerciseTile({super.key, required this.data, required this.tileAction});
+  const ExerciseTile({super.key, required this.data, required this.tileAction});
 
   @override
   State<ExerciseTile> createState() => ExerciseTileState();
@@ -38,24 +39,17 @@ class ExerciseTileState extends State<ExerciseTile> {
     return Padding(
       padding: const EdgeInsets.only(left: 30, right: 30, bottom: 8),
       child: Container(
-        height: 25,
         decoration:
-          BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10), boxShadow: const [
+          BoxDecoration(color: white, borderRadius: BorderRadius.circular(10), boxShadow: const [
           BoxShadow(
             color: Colors.black38,
             blurRadius: 2,
             offset: Offset(1.0, 7.0),
           )
         ]),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              width: 30,
-              child: IconButton(onPressed: tileState == TileState.isAvailable ? handleOnPressed : null, icon: const Icon(Icons.add), ),
-            ),
-            Expanded(flex: 3, child: Text(widget.data))
-          ],
+        child: ListTile(
+          title: Text(widget.data), 
+          trailing: IconButton(onPressed: tileState == TileState.isAvailable ? handleOnPressed : null, icon: const Icon(Icons.add),)
         ),
       ),
     );

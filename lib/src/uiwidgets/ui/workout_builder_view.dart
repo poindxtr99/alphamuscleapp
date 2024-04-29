@@ -1,6 +1,7 @@
 import 'package:alphamuscle/src/models/exercise.dart';
 import 'package:flutter/material.dart';
 import 'workout_builder_tile.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import '../../models/increasing_size_physics.dart';
 
 class WorkoutBuilderView extends StatefulWidget {
@@ -14,11 +15,12 @@ class WorkoutBuilderView extends StatefulWidget {
 
 class WorkoutBuilderViewState extends State<WorkoutBuilderView> {
   List<Exercise> itemList = [];
+  CarouselController builderCarouselController = CarouselController();
 
   void viewAction(Exercise newExercise) {
-    print('This is the viewAction:');
     setState(() {
       itemList.add(newExercise);
+      builderCarouselController.animateToPage(itemList.length-1);
     });
   }
   void tileAction(Exercise exerciseToRemove) {
@@ -39,19 +41,26 @@ class WorkoutBuilderViewState extends State<WorkoutBuilderView> {
   Widget build(BuildContext context) {
     return Container(
           color: Colors.blue, // Set the background color as needed
-          height: MediaQuery.of(context).size.height * 0.3,
+          height: MediaQuery.of(context).size.height * 0.4,
           child: Center(
-            child: ListView.separated(
-              physics: const IncreasingSizePhysics(),
-            scrollDirection: Axis.horizontal,
-            itemCount: itemList.length,
-            itemBuilder: (ctx, index) {
-              double center = MediaQuery.of(context).size.width / 2;
-              double scrollOffset = MediaQuery.of(context).size.width;
-              double itemSize = _calculateItemSize(index, scrollOffset, center);
-              return WorkoutBuilderTile(height:itemSize, callBack: tileAction, data: itemList[index],);
-            },
-            separatorBuilder: (ctx, index) { return const SizedBox(width: 10,); },),
+            child: CarouselSlider.builder(
+              itemCount: itemList.length, 
+              carouselController: builderCarouselController,
+              itemBuilder: (ctx, index, pgidx) {
+                double center = MediaQuery.of(context).size.width / 2;
+                double scrollOffset = MediaQuery.of(context).size.width;
+                double itemSize = _calculateItemSize(index, scrollOffset, center);
+                return WorkoutBuilderTile(height:itemSize, callBack: tileAction, data: itemList[index],);
+              }, 
+              options: CarouselOptions(
+                enableInfiniteScroll: false,
+                viewportFraction: 0.75,
+                reverse: true,
+                autoPlay: false,
+                enlargeCenterPage: true,
+                enlargeFactor: 0.3,
+                scrollDirection: Axis.horizontal,
+              ))
           ),
         
       );

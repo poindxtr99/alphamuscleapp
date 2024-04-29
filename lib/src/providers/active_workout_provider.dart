@@ -4,8 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ActiveWorkoutNotifier extends StateNotifier<Workout>{
   ActiveWorkoutNotifier() : super(Workout(name: "Default"));
 
-  void setActiveWorkout(Workout workout){
+  void setActiveWorkout(Workout workout) {
     state = workout;
+  }
+
+  void clearActiveWorkout() {
+    state = Workout(name: "Default");
   }
 }
 

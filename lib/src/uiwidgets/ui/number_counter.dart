@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:alphamuscle/src/util/size_util.dart';
 
 class NumberCounter extends StatefulWidget {
+  final bool isVertical;
+  final bool isInverted;
+  final String label;
 
-  NumberCounter({required isVertical});
+  const NumberCounter({super.key, required this.isVertical, required this.isInverted, required this.label});
 
   @override
   State<NumberCounter> createState() => _NumberCounterState();
 }
 
 class _NumberCounterState extends State<NumberCounter> {
-  final bool isVertical = false;
+  
   int currentValue = 0;
 
   void incrementValue(){
@@ -24,19 +28,60 @@ class _NumberCounterState extends State<NumberCounter> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return isVertical ? _buildVerticalCounter() : _buildHorizontalCounter();
+    return widget.isVertical ? _buildVerticalCounter() : _buildHorizontalCounter();
   }
 
   Widget _buildVerticalCounter() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      verticalDirection: VerticalDirection.up,
       children: <Widget>[
-        IconButton(
-            onPressed: () => {},
-            icon: const Icon(Icons.arrow_drop_up)), //button
-        Container(height: 20, child: Text('$currentValue')), //
-        IconButton(
-            onPressed: () => {}, icon: const Icon(Icons.arrow_drop_down)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          textDirection: widget.isInverted ? TextDirection.rtl : TextDirection.ltr,
+          children: [
+            Center(
+              child: Text('$currentValue', 
+              style: const TextStyle(
+                color: Colors.white, 
+                fontSize: 50, 
+                fontWeight: FontWeight.w700),)), //
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: incrementValue,
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    ),
+                  child: const Icon(Icons.keyboard_arrow_up),
+                  
+                ), //button
+                ElevatedButton(
+                  onPressed: decrementValue, 
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  ),
+                  child: const Icon(Icons.keyboard_arrow_down)),
+              ]
+          )]
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            widget.label, 
+            style: TextStyle(
+              color: Colors.white, 
+              fontSize:SizeUtil.getBothAxis(28.0), 
+              fontWeight: FontWeight.w700),),
+        ),
       ],
     );
   }

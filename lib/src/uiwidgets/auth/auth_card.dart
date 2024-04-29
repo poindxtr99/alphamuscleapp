@@ -1,54 +1,83 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-enum AuthMode { SignUp, SignIn }
+enum AuthMode { signUp, signIn }
 
 class AuthCard extends StatefulWidget {
+  AuthMode? authMode;
+  
+  AuthCard({super.key, required AuthMode this.authMode});
+
   @override
   State<AuthCard> createState() => _AuthCardState();
+
+
+  static Future<void> showAuthCard(BuildContext context, AuthMode initAuthMode) {
+      return showDialog(
+        context: context, 
+        builder: (BuildContext context){
+          return AuthCard(authMode: initAuthMode,);
+      });
+  }
 }
 
 class _AuthCardState extends State<AuthCard> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  AuthMode _authMode = AuthMode.SignIn;
-  Map<String, String> _authData = {
+  
+  final Map<String, String> _authData = {
     'email': '',
     'password': '',
   };
   var _isLoading = false;
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   void _switchAuthMode() {
-    if (_authMode == AuthMode.SignUp) {
+    _isLoading = false;
+    if (widget.authMode == AuthMode.signUp) {
       setState(() {
-        _authMode = AuthMode.SignIn;
+        widget.authMode = AuthMode.signIn;
       });
     } else {
       setState(() {
-        _authMode = AuthMode.SignUp;
+        widget.authMode = AuthMode.signUp;
       });
     }
   }
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
+  void _submit() async {
+    if (!_formKey.currentState!.validate()) {
       // Invalid!
       return;
     }
+    print ("AuthCard::_submit - response status code:");
+
     _formKey.currentState?.save();
     setState(() {
       _isLoading = true;
     });
-    // Is this part necessary????
-    // if (_authMode == AuthMode.SignIn) {
-    //   // Log user in
-    // } else {
-    //   // Sign user up
-    // }
-    setState(() {
-      _isLoading = false;
-    });
+
+    final url = Uri.https("b-alphamuscle-default-rtdb.firebaseio.com", 'test_users.json');
+    try {
+      final http.Response response = await http.post(url, headers: <String, String>{
+        'Content-Type': 'application/json',
+       }, body: jsonEncode(<String, String>{
+        'username':_emailController.text,
+        'password':_passwordController.text
+       }));
+      widget.authMode == AuthMode.signIn ? Navigator.of(context).pop() : _switchAuthMode();
+    } catch(e) {
+      print ("AuthCard::_submit - error: $e");
+    }
   }
 
+  @override
   Widget build(context) {
     final deviceSize = MediaQuery.of(context).size;
 
@@ -56,19 +85,20 @@ class _AuthCardState extends State<AuthCard> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.SignUp ? 320 : 260,
+        height: widget.authMode == AuthMode.signUp ? 320 : 260,
         constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.SignUp ? 320 : 260),
+            BoxConstraints(minHeight: widget.authMode == AuthMode.signUp ? 320 : 260, maxHeight: 350),
         width: deviceSize.width * 0.75,
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Email:'),
+                  decoration: const InputDecoration(labelText: 'Email:'),
                   keyboardType: TextInputType.emailAddress,
+                  controller: _emailController,
                   validator: (value) {
                     if (value!.isEmpty || !value.contains('@')) {
                       return 'Invalid email';
@@ -80,47 +110,49 @@ class _AuthCardState extends State<AuthCard> {
                   },
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
                     if (value!.isEmpty || value.length < 8) {
                       return 'Password length is too small';
                     }
+                    return null;
                   },
                   onSaved: (value) {
                     _authData['password'] = value as String;
                   },
                 ),
-                if (_authMode == AuthMode.SignUp)
+                if (widget.authMode == AuthMode.signUp)
                   TextFormField(
-                    enabled: _authMode == AuthMode.SignUp,
-                    decoration: InputDecoration(labelText: 'Confirm Password'),
+                    enabled: widget.authMode == AuthMode.signUp,
+                    decoration: const InputDecoration(labelText: 'Confirm Password'),
                     obscureText: true,
-                    validator: _authMode == AuthMode.SignUp
+                    validator: widget.authMode == AuthMode.signUp
                         ? (value) {
                             if (value != _passwordController.text) {
                               return 'Passwords do not match!';
                             }
+                            return null;
                           }
                         : null,
                   ),
-                SizedBox(
+                const SizedBox(
                   // sizedbox for spacing
                   height: 20,
                 ),
                 if (_isLoading)
-                  CircularProgressIndicator()
+                  const CircularProgressIndicator()
                 else
                   ElevatedButton(
-                    child: Text(
-                        _authMode == AuthMode.SignUp ? 'Sign Up' : 'Sign In'),
                     onPressed: _submit,
+                    child: Text(
+                        widget.authMode == AuthMode.signUp ? 'Sign Up' : 'Sign In'),
                   ),
                 TextButton(
                     onPressed: _switchAuthMode,
                     child: Text(
-                        '${_authMode == AuthMode.SignUp ? 'Sign In' : 'Sign Up'} instead'))
+                        '${widget.authMode == AuthMode.signUp ? 'Sign In' : 'Sign Up'} instead'))
               ],
             ),
           ),

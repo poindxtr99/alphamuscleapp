@@ -1,4 +1,5 @@
 import 'package:alphamuscle/src/models/exercise.dart';
+import 'package:alphamuscle/src/uiwidgets/ui/category_tile.dart';
 import 'package:alphamuscle/src/uiwidgets/ui/exercise_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +9,7 @@ class ExerciseListView extends StatefulWidget {
   final Function(Exercise) screenAction;
   ListState listState = ListState.isClosed;
   final GlobalKey<ExerciseTileState> exerciseListViewKey = GlobalKey();
+
   ExerciseListView({super.key, required this.screenAction});
 
   @override
@@ -15,6 +17,8 @@ class ExerciseListView extends StatefulWidget {
 }
 
 class ExerciseListViewState extends State<ExerciseListView> {
+
+  final ScrollController _controller = ScrollController();
 
   final List<List<String>> nestedList = [
     ['Item 1-1', 'Item 1-2', 'Item 1-3'],
@@ -38,35 +42,19 @@ class ExerciseListViewState extends State<ExerciseListView> {
     activeRenderers[exerciseToAdd.name] = stateRep;
   }
 
+  void onExpand (double offset) {
+    _controller.animateTo(offset, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
+          controller: _controller,
           shrinkWrap: true,
           itemCount: nestedList.length,
           itemBuilder: (ctx, index) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Group ${index + 1}',
-                      style:
-                          const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    )),
-                ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: nestedList[index].length,
-                    itemBuilder: (ctx, nestedIndex) {
-                      return ExerciseTile(
-                        data: nestedList[index][nestedIndex],
-                        tileAction: tileAction
-                      );
-                    })
-              ],
-              //title: Text(exerciseCategories[index].category),
-            );
+            return CategoryTile(data: nestedList[index], categoryIndex: index, tileAction: tileAction);
           }),
     );
   }
