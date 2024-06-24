@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:alphamuscle/src/services/auth_service.dart';
 
 enum AuthMode { signUp, signIn }
 
@@ -56,13 +55,25 @@ class _AuthCardState extends State<AuthCard> {
       // Invalid!
       return;
     }
-    print ("AuthCard::_submit - response status code:");
+    
 
     _formKey.currentState?.save();
     setState(() {
       _isLoading = true;
     });
 
+    try {
+      widget.authMode == AuthMode.signIn ?
+      await AuthService.login(context, _emailController.text, _passwordController.text) : 
+      await AuthService.signUp(context, _emailController.text, _passwordController.text); 
+      // verify context is still mounted - https://dart.dev/tools/linter-rules/use_build_context_synchronously
+      if (!mounted) return; 
+      widget.authMode == AuthMode.signIn ? Navigator.of(context).pop() : _switchAuthMode();
+    } catch(e) {
+      print("There was an error: $e");
+      // Need to set up logging
+    }
+    /*
     final url = Uri.https("b-alphamuscle-default-rtdb.firebaseio.com", 'test_users.json');
     try {
       final http.Response response = await http.post(url, headers: <String, String>{
@@ -74,7 +85,7 @@ class _AuthCardState extends State<AuthCard> {
       widget.authMode == AuthMode.signIn ? Navigator.of(context).pop() : _switchAuthMode();
     } catch(e) {
       print ("AuthCard::_submit - error: $e");
-    }
+    }*/
   }
 
   @override

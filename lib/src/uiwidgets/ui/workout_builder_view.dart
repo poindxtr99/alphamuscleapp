@@ -2,7 +2,6 @@ import 'package:alphamuscle/src/models/exercise.dart';
 import 'package:flutter/material.dart';
 import 'workout_builder_tile.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../../models/increasing_size_physics.dart';
 
 class WorkoutBuilderView extends StatefulWidget {
 

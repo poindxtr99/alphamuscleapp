@@ -1,0 +1,9 @@
+{
+    "appId": "alphamuscle_test-fnfxawq",
+    "appUrl": "https://services.cloud.mongodb.com/groups/6620cc644d696837a2065c1b/apps/664d0c964183bdb3673f1f17",
+    "baseUrl": "https://services.cloud.mongodb.com",
+    "clientApiBaseUrl": "https://us-west-2.aws.services.cloud.mongodb.com",
+    "dataApiBaseUrl": "https://us-west-2.aws.data.mongodb-api.com",
+    "dataExplorerLink": "https://cloud.mongodb.com/links/6620cc644d696837a2065c1b/explorer/Cluster0/database/collection/find",
+    "dataSourceName": "mongodb-atlas"
+}

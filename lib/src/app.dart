@@ -1,7 +1,8 @@
+import 'package:alphamuscle/src/realm/realm_services.dart';
 import 'package:flutter/material.dart';
 import 'package:alphamuscle/src/util/size_util.dart';
 import 'package:alphamuscle/src/const/color_const.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/workouts_screen.dart';
@@ -13,6 +14,8 @@ class App extends StatelessWidget {
   @override
   Widget build(context) {
     SizeUtil.size = MediaQuery.of(context).size;
+    final currentUser = Provider.of<RealmServices?>(context, listen: false)?.currentUser;
+    print ("value of the currentUser: $currentUser");
     return MaterialApp(
       title: 'Alpha Muscle',
       theme: ThemeData(

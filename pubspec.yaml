@@ -45,6 +45,10 @@ dependencies:
   build_runner: ^2.4.8
   google_fonts: ^6.2.1
   http: ^1.2.1
+  realm: ^2.2.1
+  mongo_dart: ^0.10.2
+  provider: ^6.1.2
+  flutter_secure_storage: ^4.2.1
 
 dev_dependencies:
   flutter_test:
@@ -55,7 +59,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.1
+  flutter_lints: ^4.0.0
   riverpod_generator: ^2.3.9
   custom_lint: ^0.6.2
   riverpod_lint: ^2.3.7
@@ -84,6 +88,7 @@ flutter:
      - assets/images/core_exercises_gr.jpg
      - assets/images/upper_exercises_gr.jpg
      - assets/images/weight_workout_gr.jpg
+     - assets/config/atlasConfig.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

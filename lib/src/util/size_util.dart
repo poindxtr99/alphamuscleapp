@@ -5,7 +5,7 @@ class SizeUtil {
   static const _DESIGN_WIDTH = 750;
   static const _DESIGN_HEIGHT = 1334;
 
-  static Size _logicSize = Size(0.0, 0.0);
+  static Size _logicSize = const Size(0.0, 0.0);
 
   static get width {
     return _logicSize.width;

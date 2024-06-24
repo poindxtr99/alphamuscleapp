@@ -1,6 +1,5 @@
 import 'package:alphamuscle/src/screens/alpha_dashboard_screen.dart';
 import 'package:alphamuscle/src/screens/active_workout_screen.dart';
-import 'package:alphamuscle/src/util/size_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alphamuscle/src/const/color_const.dart';
@@ -31,7 +30,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
     _tabController.index = activeWorkout.exercises.isEmpty ? 0 : 1;
     return Scaffold(
       appBar: AppBar(
-        titleTextStyle: TextStyle(
+        titleTextStyle: const TextStyle(
           fontSize: 25,
           fontWeight: FontWeight.bold,
           color: offWhite
